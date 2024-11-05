@@ -172,8 +172,6 @@ const flashWinner = () => {
 
   const generateShapes = () => {
     if (rounds >= TOTAL_ROUNDS) {
-      //gridRef.current.forEach((button) => button.setColor("#000000"));
-      //setGridUpdated((prev) => prev + 1);
       playSound();
       flashWinner();
       setTimeout(() => {
@@ -183,12 +181,13 @@ const flashWinner = () => {
       }, 10000);
       return;
     }
-
+  
     setRoundScored(false);
-
+  
+    // Reset the grid to black buttons
     gridRef.current = Array(WALL_COUNT * GRID_WIDTH * GRID_HEIGHT).fill(null).map(() => new Button("#000000"));
     setGridUpdated((prev) => prev + 1);
-
+  
     const newShapes = [];
     let remainingSpaces = [];
     for (let row = 0; row < GRID_HEIGHT; row++) {
@@ -196,9 +195,10 @@ const flashWinner = () => {
         remainingSpaces.push({ row, col });
       }
     }
-
+  
     let colorsCopy = [...availableColors];
-
+  
+    // Generate shapes for the first wall
     while (remainingSpaces.length > 0 && colorsCopy.length > 0) {
       const newShape = generateRandomShape(remainingSpaces, colorsCopy, GRID_HEIGHT, GRID_WIDTH);
       if (newShape) {
@@ -210,40 +210,36 @@ const flashWinner = () => {
         });
       }
     }
-
+  
+    // Select a common shape from the generated shapes
     const commonShape = newShapes[Math.floor(Math.random() * newShapes.length)];
     if (!commonShape || !commonShape.colorName) {
       console.error("Selected common shape or its colorName is invalid.");
       return;
     }
-
+  
     selectedShape.current = {
       color: commonShape.color,
       colorName: commonShape.colorName,
       nodes: commonShape.nodes.map((node) => ({ ...node, gridIndex: 0 })),
     };
     logSelectedCommonShape(commonShape);
-
-    gridRef.current.forEach((button, index) => {
-      const wallIndex = Math.floor(index / (GRID_WIDTH * GRID_HEIGHT));
-      if (button.color === "#000000" && activeWalls[wallIndex]) {
-        const randomColorName = availableColors[Math.floor(Math.random() * availableColors.length)];
-        button.setColor(colorMap[randomColorName]);
-      }
-    });
-
+  
+    // Generate shapes for other walls, ensuring no duplication of the common shape color
     for (let wallIndex = 1; wallIndex < WALL_COUNT; wallIndex++) {
       if (!activeWalls[wallIndex]) continue;
-
+  
       const remainingSpacesForGrid = [];
       for (let row = 0; row < GRID_HEIGHT; row++) {
         for (let col = 0; col < GRID_WIDTH; col++) {
           remainingSpacesForGrid.push({ row, col });
         }
       }
-
+  
+      // Filter out the common shape color
       let colorsCopyForGrid = [...availableColors].filter((color) => colorMap[color] !== commonShape.color);
-
+  
+      // Generate shapes on this wall using only the filtered colors
       while (remainingSpacesForGrid.length > 0 && colorsCopyForGrid.length > 0) {
         const newShapeForGrid = generateRandomShape(remainingSpacesForGrid, colorsCopyForGrid, GRID_HEIGHT, GRID_WIDTH);
         if (newShapeForGrid) {
@@ -254,13 +250,14 @@ const flashWinner = () => {
           });
         }
       }
-
+  
+      // Offset the common shape and add it to this wall
       const maxRowOffset = GRID_HEIGHT - Math.max(...commonShape.nodes.map((node) => node.row)) - 1;
       const maxColOffset = GRID_WIDTH - Math.max(...commonShape.nodes.map((node) => node.col)) - 1;
-
+  
       const rowOffset = Math.floor(Math.random() * (maxRowOffset + 1));
       const colOffset = Math.floor(Math.random() * (maxColOffset + 1));
-
+  
       const newNodesForThisWall = [];
       commonShape.nodes.forEach((node) => {
         const newRow = node.row + rowOffset;
@@ -268,19 +265,28 @@ const flashWinner = () => {
         const buttonIndex = newRow * GRID_WIDTH + newCol + wallIndex * GRID_WIDTH * GRID_HEIGHT;
         const adjustedIndex = adjustForButtonConnections(buttonIndex, GRID_WIDTH);
         gridRef.current[adjustedIndex].setColor(commonShape.color);
-
+  
         newNodesForThisWall.push({ row: newRow, col: newCol, gridIndex: wallIndex });
       });
-
+  
       selectedShape.current.nodes = [...selectedShape.current.nodes, ...newNodesForThisWall];
     }
-
+  
+    // Fill any remaining black buttons with random colors, excluding the common shape color
+    const fillColorOptions = Object.values(colorMap).filter((color) => color !== commonShape.color);
+    gridRef.current.forEach((button) => {
+      if (button.color === "#000000") {
+        const randomColor = fillColorOptions[Math.floor(Math.random() * fillColorOptions.length)];
+        button.setColor(randomColor);
+      }
+    });
+  
     setGeneratedShapes(newShapes);
     setGridUpdated((prev) => prev + 1);
     setRounds((prevRounds) => prevRounds + 1);
     startInactivityTimeout();
   };
-
+  
   const logSelectedCommonShape = (commonShape) => {
     console.log("Selected Common Shape:");
     commonShape.nodes.forEach(node => {
