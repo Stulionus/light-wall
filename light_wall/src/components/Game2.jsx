@@ -114,7 +114,7 @@ function Game2({ gridRef, setGridUpdated, onGameEnd, pressedIndex, resetPressedI
   const [generatedShapes, setGeneratedShapes] = useState([]);
   const [rounds, setRounds] = useState(0);
   const selectedShape = useRef(null);
-  const [scores, setScores] = useState(Array(WALL_COUNT).fill(0));
+  const scores = useRef(Array(WALL_COUNT).fill(0));
   const inactivityTimeout = useRef(null);
   const [roundScored, setRoundScored] = useState(false);
   const [winner, setWinner] = useState(null);
@@ -134,41 +134,47 @@ function Game2({ gridRef, setGridUpdated, onGameEnd, pressedIndex, resetPressedI
   const startInactivityTimeout = () => {
     if (inactivityTimeout.current) clearTimeout(inactivityTimeout.current);
     inactivityTimeout.current = setTimeout(() => {
-      console.log("No button pressed within 1 minute. Ending game.");
+      //console.log("No button pressed within 1 minute. Ending game.");
       resetGridToDefault();
       onGameEnd();
     }, INACTIVE_TIMEOUT);
   };
 
-const flashWinner = () => {
+  const flashWinner = () => {
+    //console.log(scores);
     if (rounds >= TOTAL_ROUNDS) {
-      const maxScore = Math.max(...scores);
-      const winningWallIndex = scores.indexOf(maxScore);
-      setWinner(winningWallIndex);
-      console.log(`Winner: Wall ${winningWallIndex}`);
-
+      const maxScore = Math.max(...scores.current);
+      const winningWallIndexes = scores.current.reduce((acc, score, index) => {
+        if (score === maxScore) acc.push(index);
+        return acc;
+      }, []);
+  
+      //console.log(`Winners: Walls ${winningWallIndexes.join(", ")}`);
+  
       let blinkCount = 0;
       const blinkInterval = setInterval(() => {
         if (blinkCount >= 10) {
           clearInterval(blinkInterval);
           return;
         }
-
+  
         gridRef.current.forEach((button, index) => {
           const wallIndex = Math.floor(index / (GRID_WIDTH * GRID_HEIGHT));
           const adjustedIndex = adjustForButtonConnections(index, GRID_WIDTH);
-          if (wallIndex === winningWallIndex) {
+  
+          if (winningWallIndexes.includes(wallIndex)) {
             button.setColor(blinkCount % 2 === 0 ? "#00FF00" : "#000000");
           } else {
             button.setColor("#000000");
           }
         });
-
+  
         setGridUpdated((prev) => prev + 1);
         blinkCount++;
       }, 300);
     }
-  }
+  };
+  
 
   const generateShapes = () => {
     if (rounds >= TOTAL_ROUNDS) {
@@ -190,6 +196,7 @@ const flashWinner = () => {
   
     const newShapes = [];
     let remainingSpaces = [];
+  
     for (let row = 0; row < GRID_HEIGHT; row++) {
       for (let col = 0; col < GRID_WIDTH; col++) {
         remainingSpaces.push({ row, col });
@@ -227,7 +234,7 @@ const flashWinner = () => {
   
     // Generate shapes for other walls, ensuring no duplication of the common shape color
     for (let wallIndex = 1; wallIndex < WALL_COUNT; wallIndex++) {
-      if (!activeWalls[wallIndex]) continue;
+      if (!activeWalls[wallIndex]) continue; // Skip inactive walls
   
       const remainingSpacesForGrid = [];
       for (let row = 0; row < GRID_HEIGHT; row++) {
@@ -274,8 +281,9 @@ const flashWinner = () => {
   
     // Fill any remaining black buttons with random colors, excluding the common shape color
     const fillColorOptions = Object.values(colorMap).filter((color) => color !== commonShape.color);
-    gridRef.current.forEach((button) => {
-      if (button.color === "#000000") {
+    gridRef.current.forEach((button, index) => {
+      const wallIndex = Math.floor(index / (GRID_WIDTH * GRID_HEIGHT));
+      if (button.color === "#000000" && activeWalls[wallIndex]) {
         const randomColor = fillColorOptions[Math.floor(Math.random() * fillColorOptions.length)];
         button.setColor(randomColor);
       }
@@ -288,13 +296,13 @@ const flashWinner = () => {
   };
   
   const logSelectedCommonShape = (commonShape) => {
-    console.log("Selected Common Shape:");
+    //console.log("Selected Common Shape:");
     commonShape.nodes.forEach(node => {
-      console.log(`Grid: 0, Row: ${node.row}, Col: ${node.col}`);
+      //console.log(`Grid: 0, Row: ${node.row}, Col: ${node.col}`);
     });
 
     selectedShape.current.nodes.forEach(node => {
-      console.log(`Grid: ${node.gridIndex}, Row: ${node.row}, Col: ${node.col}`);
+      //console.log(`Grid: ${node.gridIndex}, Row: ${node.row}, Col: ${node.col}`);
     });
   };
 
@@ -324,7 +332,7 @@ const flashWinner = () => {
       col = GRID_WIDTH - 1 - col;
     }
 
-    console.log(`Button pressed: (${row}, ${col}) in Grid ${gridIndex}`);
+    //console.log(`Button pressed: (${row}, ${col}) in Grid ${gridIndex}`);
 
     if (selectedShape.current && !roundScored) {
       const isMatch = selectedShape.current.nodes.some(
@@ -336,12 +344,8 @@ const flashWinner = () => {
 
       if (isMatch) {
         playRoundEnd();
-        console.log("Match found with selected shape!");
-        setScores((prevScores) => {
-          const newScores = [...prevScores];
-          newScores[gridIndex] += 1;
-          return newScores;
-        });
+        //console.log("Match found with selected shape!");
+        scores.current[gridIndex] += 1;
         setRoundScored(true);
 
         const tempGridRef = [...gridRef.current];
@@ -367,7 +371,7 @@ const flashWinner = () => {
 
   useEffect(() => {
     if (pressedIndex !== null) {
-      console.log("Pressed button index:", pressedIndex);
+      //console.log("Pressed button index:", pressedIndex);
       handleButtonPress(pressedIndex);
     }
 
@@ -443,7 +447,7 @@ const flashWinner = () => {
 
               const colorName = selectedShape.current?.colorName;
               const displayColor = colorName && screenColorMap[colorName] ? screenColorMap[colorName] : "transparent";
-              console.log(colorName);
+              //console.log(colorName);
 
               return (
                 <div
@@ -485,11 +489,11 @@ const flashWinner = () => {
                   style={{
                     paddingLeft: "3vw",
                     marginTop: "10vh",
-                    fontSize: scores[1] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[1] === Math.max(...scores) ? "#00FF00" : "white",
+                    fontSize: scores.current[1] === Math.max(...scores.current) ? "20vh" : "15vh",
+                    color: scores.current[1] === Math.max(...scores.current) ? "#00FF00" : "white",
                   }}
                 >
-                  {scores[1]}
+                  {scores.current[1]}
                 </div>
               </div>
             </div>
@@ -517,11 +521,11 @@ const flashWinner = () => {
                 <div
                   style={{
                     marginTop: "10vh",
-                    fontSize: scores[0] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[0] === Math.max(...scores) ? "#00FF00" : "white",
+                    fontSize: scores.current[0] === Math.max(...scores.current) ? "20vh" : "15vh",
+                    color: scores.current[0] === Math.max(...scores.current) ? "#00FF00" : "white",
                   }}
                 >
-                  {scores[0]}
+                  {scores.current[0]}
                 </div>
               </div>
             </div>
@@ -550,11 +554,11 @@ const flashWinner = () => {
                   style={{
                     marginTop: "10vh",
                     paddingRight: "3vw",
-                    fontSize: scores[2] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[2] === Math.max(...scores) ? "#00FF00" : "white",
+                    fontSize: scores.current[2] === Math.max(...scores.current) ? "20vh" : "15vh",
+                    color: scores.current[2] === Math.max(...scores.current) ? "#00FF00" : "white",
                   }}
                 >
-                  {scores[2]}
+                  {scores.current[2]}
                 </div>
               </div>
             </div>

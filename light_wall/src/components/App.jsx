@@ -201,10 +201,10 @@ function App() {
 
   useEffect(() => {
     const currentTime = Date.now();
-    console.log(currentPressed)
+    //console.log(currentPressed)
     if (!isCountdownActive) {
       if ((currentPressed === 6 && showGame1Screen && !gameLaunched && !isStartingGame1) || (currentPressed === 8 && showGame2Screen && !game2Launched && !isStartingGame2)) {
-        console.log("Returning to main screen...");
+        //console.log("Returning to main screen...");
         setShowGame1Screen(false);
         setShowGame2Screen(false);
         gridRef.current[6].color = "#00FF00";
@@ -213,15 +213,15 @@ function App() {
         setCurrentPressed(-1);
         playSound();
       } else if (currentPressed === 8 && showGame1Screen && !gameLaunched && !isStartingGame1 && currentTime - lastButtonPressTime >= 500) {
-        console.log("Button 8 pressed again, launching Game1...");
+        //console.log("Button 8 pressed again, launching Game1...");
         startGameWithTimer(1);
         playSound();
       } else if (currentPressed === 6 && showGame2Screen && !game2Launched && !isStartingGame2 && currentTime - lastButtonPressTime >= 500) {
-        console.log("Button 6 pressed again, launching Game2...");
+        //console.log("Button 6 pressed again, launching Game2...");
         startGameWithTimer(2);
         playSound();
       } else if (currentPressed === 8 && !gameLaunched && !game2Launched) {
-        console.log("Button 8 pressed, switching to Whack screen...");
+        //console.log("Button 8 pressed, switching to Whack screen...");
         setShowGame1Screen(true);
         setShowGame2Screen(false);
         gridRef.current[8].color = "#00FF00";
@@ -230,7 +230,7 @@ function App() {
         setCurrentPressed(-1);
         playSound();
       } else if (currentPressed === 6 && !game2Launched && !gameLaunched) {
-        console.log("Button 6 pressed, switching to Tetris screen...");
+        //console.log("Button 6 pressed, switching to Tetris screen...");
         setShowGame2Screen(true);
         setShowGame1Screen(false);
         gridRef.current[6].color = "#00FF00";
@@ -318,7 +318,7 @@ function App() {
 
 
   const handleGameEnd = () => {
-    console.log("Game1 has ended.");
+    //console.log("Game1 has ended.");
     gridRef.current = gridRef.current.map((button, index) => {
       return index === 6 || index === 8 ? new Button("#00FF00") : new Button("#000000");
     });
@@ -330,7 +330,7 @@ function App() {
   };
   
   const handleGame2End = () => {
-    console.log("Game2 has ended.");
+    //console.log("Game2 has ended.");
     gridRef.current = gridRef.current.map((button, index) => {
       return index === 6 || index === 8 ? new Button("#00FF00") : new Button("#000000");
     });
