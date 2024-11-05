@@ -8,6 +8,7 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     fullscreen: true, // Launch in full-screen mode
+    frame: false,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
