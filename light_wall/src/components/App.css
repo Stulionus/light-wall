@@ -1,0 +1,129 @@
+/* @import url("https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,300,200"); */
+/* @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap'); */
+
+ @font-face {
+  font-family: "Primera";
+  src: url("../public/MODULAR-14.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  letter-spacing: 0.05em;
+} 
+
+
+html {
+  /*background: linear-gradient(#4a4d54, #30343f);*/
+  background-color: black;
+  /*font-family: "Yanone Kaffeesatz";*/
+  display: flex;
+  height: 100%;
+}
+header {
+  font-size: xx-large;
+}
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  /* padding: 25px; */
+  color: #ffffff;
+  font-size: x-large;
+  line-height: 1.85rem;
+  font-weight: 300;
+  font-family: "Primera";
+  line-height: 1.85em;
+  font-weight: bold;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+h1,
+label {
+  padding-right: 10px;
+}
+
+.container-all {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+header {
+  font-size: 2em;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.configurator {
+
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 5px;
+  align-items: center;
+}
+
+.input-container {
+  margin-top: 20px;
+}
+
+.button {
+  margin-top: 10px;
+}
+
+.quick-colors {
+  display: flex;
+  gap: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.93);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gamecontainer{
+  /* border: 2px solid white;
+  border-radius: 10%; */
+  /* background-color: rgba(99, 99, 99, 0.4); */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 70vh;
+  width: 40vw;
+  padding-bottom: 10vh;
+  font-size: 5vh;
+}
+
+.game-screen{
+  height: 20vh;
+  font-size: 5vh;
+  margin-top: -80vh;
+}
+
+.circle{
+  width: 12vh;
+  height: 12vh;
+  border-radius: 50%;
+  display: inline-block;
+}
