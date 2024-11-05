@@ -7,8 +7,7 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 800, 
-    height: 600,
+    fullscreen: true, // Launch in full-screen mode
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -27,7 +26,7 @@ const createWindow = () => {
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.openDevTools();
+  // Removed the line that opens the developer tools
 };
 
 app.whenReady().then(createWindow);

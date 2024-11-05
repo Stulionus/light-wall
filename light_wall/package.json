@@ -10,10 +10,13 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "homepage": "./"
+    "homepage": "./",
+    "build-electron": "mkdir build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared",
+    "build": "webpack --config webpack.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@electron-forge/cli": "^7.5.0",
     "@electron-forge/maker-deb": "^7.5.0",
@@ -28,9 +31,11 @@
     "babel-loader": "^9.2.1",
     "css-loader": "^6.11.0",
     "electron": "33.0.2",
+    "electron-builder": "^25.1.8",
     "file-loader": "^6.2.0",
     "node-loader": "^2.0.0",
-    "style-loader": "^3.3.4"
+    "style-loader": "^3.3.4",
+    "webpack-cli": "^5.1.4"
   },
   "keywords": [],
   "author": {
