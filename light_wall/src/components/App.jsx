@@ -60,7 +60,7 @@ const CountdownScreen = ({ timeLeft, logo }) => {
 
 function App() {
   const [message, setMessage] = useState("");
-  const [color, setColor] = useState("#ff0000");
+  const [color, setColor] = useState("#ff00ff");
   const gridRef = useRef([]);
   const [sentMessage, setSentMessage] = useState("");
   const [ws, setWs] = useState(null);
@@ -92,7 +92,7 @@ function App() {
   useEffect(() => {
     const totalButtons = 90;
     gridRef.current = Array.from({ length: totalButtons }, (_, index) => {
-      return index === 6 || index === 8 ? new Button("#00FF00") : new Button("#000000");
+      return index === 6 || index === 8 ? new Button("#00FFFF") : new Button("#000000");
     });
   }, []);
 
@@ -207,8 +207,8 @@ function App() {
         //console.log("Returning to main screen...");
         setShowGame1Screen(false);
         setShowGame2Screen(false);
-        gridRef.current[6].color = "#00FF00";
-        gridRef.current[8].color = "#00FF00";
+        gridRef.current[6].color = "#00FFFF";
+        gridRef.current[8].color = "#00FFFF";
         setGridUpdated((prev) => prev + 1);
         setCurrentPressed(-1);
         playSound();
@@ -224,8 +224,8 @@ function App() {
         //console.log("Button 8 pressed, switching to Whack screen...");
         setShowGame1Screen(true);
         setShowGame2Screen(false);
-        gridRef.current[8].color = "#00FF00";
-        gridRef.current[6].color = "#FF0000";
+        gridRef.current[8].color = "#00FFFF";
+        gridRef.current[6].color = "#FF00FF";
         setGridUpdated((prev) => prev + 1);
         setCurrentPressed(-1);
         playSound();
@@ -233,8 +233,8 @@ function App() {
         //console.log("Button 6 pressed, switching to Tetris screen...");
         setShowGame2Screen(true);
         setShowGame1Screen(false);
-        gridRef.current[6].color = "#00FF00";
-        gridRef.current[8].color = "#FF0000";
+        gridRef.current[6].color = "#00FFFF";
+        gridRef.current[8].color = "#FF00FF";
         setGridUpdated((prev) => prev + 1);
         setCurrentPressed(-1);
         playSound();
@@ -253,7 +253,7 @@ function App() {
     gridRef.current.forEach((button, index) => {
       const wallIndex = Math.floor(index / 30);
       if (wallIndex === 0) {
-        button.color = "#00FF00";
+        button.color = "#00FFFF";
       } else {
         button.color = "#000000";
       }
@@ -302,7 +302,7 @@ function App() {
             newWalls[wallIndex] = true;
 
             for (let i = wallIndex * 30; i < (wallIndex + 1) * 30; i++) {
-              gridRef.current[i].color = "#00FF00";
+              gridRef.current[i].color = "#00FFFF";
             }
 
             setGridUpdated((prev) => prev + 1);
@@ -320,7 +320,7 @@ function App() {
   const handleGameEnd = () => {
     //console.log("Game1 has ended.");
     gridRef.current = gridRef.current.map((button, index) => {
-      return index === 6 || index === 8 ? new Button("#00FF00") : new Button("#000000");
+      return index === 6 || index === 8 ? new Button("#00FFFF") : new Button("#000000");
     });
     setGridUpdated((prev) => prev + 1);
   
@@ -332,7 +332,7 @@ function App() {
   const handleGame2End = () => {
     //console.log("Game2 has ended.");
     gridRef.current = gridRef.current.map((button, index) => {
-      return index === 6 || index === 8 ? new Button("#00FF00") : new Button("#000000");
+      return index === 6 || index === 8 ? new Button("#00FFFF") : new Button("#000000");
     });
     setGridUpdated((prev) => prev + 1);
   
@@ -459,7 +459,7 @@ function App() {
                 }}
               />
               <div style={{ textAlign: "center", marginTop: "5vh" }}>
-                <div className="circle" style={{ backgroundColor: "#00FF00" }}
+                <div className="circle" style={{ backgroundColor: "#00FFFF" }}
                   onClick={() => setCurrentPressed(8)}
                 />
                 <p style={{ fontSize: "5vh" }}>Press to Start</p>
@@ -488,7 +488,7 @@ function App() {
                 }}
               />
               <div style={{ textAlign: "center", marginTop: "5vh" }}>
-                <div className="circle" style={{ backgroundColor: "#00FF00" }}
+                <div className="circle" style={{ backgroundColor: "#00FFFF" }}
                   onClick={() => setCurrentPressed(6)}
                 />
                 <p style={{ fontSize: "5vh" }}>Press to Start</p>
@@ -518,7 +518,7 @@ function App() {
               </div>
               <div style={{ textAlign: "center", marginLeft: "7vw", fontSize: "7vh" }}>
                 <p style={{ textAlign: "center" }}>
-                  Compete to score by hitting <span style={{ color: "#00FF00" }}>green</span>
+                  Compete to score by hitting <span style={{ color: "#00FFFF" }}>green</span>
                 </p>
                 <p style={{ textAlign: "center" }}>
                   buttons and avoiding <span style={{ color: "red" }}>red</span>.
@@ -556,14 +556,14 @@ function App() {
               }}
             >
               <div style={{ textAlign: "center", marginRight: "300px" }}>
-                <div className="circle" style={{ backgroundColor: "#00FF00" }}
+                <div className="circle" style={{ backgroundColor: "#00FFFF" }}
                   onClick={() => setCurrentPressed(8)}
                 />
                 <p style={{ marginBottom: "0px", fontSize: "10vh" }}>Press to Play</p>
               </div>
 
               <div style={{ textAlign: "center", marginLeft: "300px" }}>
-                <div className="circle" style={{ backgroundColor: "#FF0000" }}
+                <div className="circle" style={{ backgroundColor: "#FF00FF" }}
                   onClick={() => setCurrentPressed(6)}
                 />
                 <p style={{ marginBottom: "0px", fontSize: "10vh" }}>Press to go Back</p>
@@ -630,14 +630,14 @@ function App() {
               }}
             >
               <div style={{ textAlign: "center", marginRight: "300px" }}>
-                <div className="circle" style={{ backgroundColor: "#FF0000" }}
+                <div className="circle" style={{ backgroundColor: "#FF00FF" }}
                   onClick={() => setCurrentPressed(8)}
                 />
                 <p style={{ marginBottom: "0px", fontSize: "10vh" }}>Press to go Back</p>
               </div>
 
               <div style={{ textAlign: "center", marginLeft: "300px" }}>
-                <div className="circle" style={{ backgroundColor: "#00FF00" }}
+                <div className="circle" style={{ backgroundColor: "#00FFFF" }}
                   onClick={() => setCurrentPressed(6)}
                 />
                 <p style={{ marginBottom: "0px", fontSize: "10vh" }}>Press to Play</p>

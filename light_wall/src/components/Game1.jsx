@@ -26,7 +26,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
   const initializeGrid = () => {
     gridRef.current = Array.from({ length: TOTAL_GRID_SIZE }, (_, index) => {
       const wallIndex = Math.floor(index / WALL_SIZE);
-      return activeWalls[wallIndex] ? new Button("#FE0000") : new Button("#000000");
+      return activeWalls[wallIndex] ? new Button("#FF0090") : new Button("#000000");
     });
   };
 
@@ -34,7 +34,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
     initializeGrid();
     const newGrid = Array.from({ length: TOTAL_GRID_SIZE }, (_, index) => {
       const wallIndex = Math.floor(index / WALL_SIZE);
-      return activeWalls[wallIndex] ? new Button("#FE0000") : new Button("#000000");
+      return activeWalls[wallIndex] ? new Button("#FF0090") : new Button("#000000");
     });
 
     randomIndexesRef.current = randomIndexesRef.current.map((_, wallIndex) => {
@@ -52,7 +52,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
         } while (usedIndices.has(newRandomIndex));
 
         usedIndices.add(newRandomIndex);
-        newGrid[newRandomIndex] = new Button("#00FE00");
+        newGrid[newRandomIndex] = new Button("#00FFFF");
       }
 
       return Array.from(usedIndices);
@@ -66,7 +66,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
     if (isGameActive) {
       const wallIndex = Math.floor(buttonIndex / WALL_SIZE);
 
-      if (activeWalls[wallIndex] && gridRef.current[buttonIndex]?.color === "#00FE00") {
+      if (activeWalls[wallIndex] && gridRef.current[buttonIndex]?.color === "#00FFFF") {
         playBoop();
         setScores((prevScores) => {
           const newScores = [...prevScores];
@@ -75,7 +75,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
         });
 
         const newGrid = [...gridRef.current];
-        newGrid[buttonIndex] = new Button("#FF0000");
+        newGrid[buttonIndex] = new Button("#FF0090");
         gridRef.current = newGrid;
         setGridUpdated((prev) => prev + 1);
       }
@@ -218,7 +218,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
                     paddingLeft: "3vw",
                     marginTop: "10vh",
                     fontSize: scores[1] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[1] === Math.max(...scores) ? "#00FF00" : "white",
+                    color: scores[1] === Math.max(...scores) ? "#00FFFF" : "white",
                   }}
                 >
                   {scores[1]}
@@ -250,7 +250,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
                   style={{
                     marginTop: "10vh",
                     fontSize: scores[0] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[0] === Math.max(...scores) ? "#00FF00" : "white",
+                    color: scores[0] === Math.max(...scores) ? "#00FFFF" : "white",
                   }}
                 >
                   {scores[0]}
@@ -283,7 +283,7 @@ const Game1 = ({ gridRef, setGridUpdated, pressedIndex, resetPressedIndex, onGam
                     marginTop: "10vh",
                     paddingRight: "3vw",
                     fontSize: scores[2] === Math.max(...scores) ? "20vh" : "15vh",
-                    color: scores[2] === Math.max(...scores) ? "#00FF00" : "white",
+                    color: scores[2] === Math.max(...scores) ? "#00FFFF" : "white",
                   }}
                 >
                   {scores[2]}
