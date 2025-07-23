@@ -181,27 +181,32 @@ function App() {
 
   };
 
-// Idle animation for left & right walls on the main screen
+// Idle animation for left & right walls (5×6 panels)
+// wall 0 = middle, wall 1 = left, wall 2 = right
 useEffect(() => {
-  // perimeter indices of one 3×10 wall, clockwise
+  // perimeter of a 6‑row × 5‑col grid (clockwise)
   const ring = [
-    0,1,2,3,4,5,6,7,8,9,      // top row
-    19,                       // mid‑row right
-    29,28,27,26,25,24,23,22,21,20, // bottom row (reverse)
-    10                        // mid‑row left
+    // top row
+    0, 1, 2, 3, 4,
+    // right side (rows 1–4)
+    9, 14, 19, 24,
+    // bottom row (cols 4→0)
+    29, 28, 27, 26, 25,
+    // left side (rows 4→1)
+    20, 15, 10, 5
   ];
   let step = 0, tid;
 
-  // only when you’re on the main menu
-  if (!showGame1Screen && !showGame2Screen && !isCountdownActive) {
+  // run whenever neither game is actually launched
+  if (!gameLaunched && !game2Launched && !isCountdownActive) {
     tid = setInterval(() => {
       // clear last dot on wall 1 and wall 2
-      ring.forEach(i => {
-        gridRef.current[i + 30].color = "#000000"; // wall 1 = left
-        gridRef.current[i + 60].color = "#000000"; // wall 2 = right
-      });
+      for (const i of ring) {
+        gridRef.current[i + 30].color = "#000000"; // wall 1
+        gridRef.current[i + 60].color = "#000000"; // wall 2
+      }
 
-      // draw new dot
+      // draw the next dot
       const idx = ring[step % ring.length];
       gridRef.current[idx + 30].color = "#00FFFF";
       gridRef.current[idx + 60].color = "#00FFFF";
@@ -212,8 +217,7 @@ useEffect(() => {
   }
 
   return () => clearInterval(tid);
-}, [showGame1Screen, showGame2Screen, isCountdownActive]);
-
+}, [gameLaunched, game2Launched, isCountdownActive]);
 
   useEffect(() => {
     connectWebSocket();
