@@ -181,43 +181,68 @@ function App() {
 
   };
 
-// Matrix‑style rain on left (wall 1) & right (wall 2)
 useEffect(() => {
+  if (gameLaunched || game2Launched || isCountdownActive) return;
+
   const COLS = 5;
   const ROWS = 6;
-  // start each column at a random row
-  const drops1 = Array.from({ length: COLS }, () => Math.floor(Math.random() * ROWS));
-  const drops2 = Array.from({ length: COLS }, () => Math.floor(Math.random() * ROWS));
+  const WALLS = [1, 2];
+  const FALL_SPEED = 200;
+
+  const drops = WALLS.flatMap(wall =>
+    Array.from({ length: COLS }, (_, col) => ({
+      wall,
+      col,
+      y: Math.floor(Math.random() * ROWS),
+      isWaiting: false,
+      waitTimer: 0,
+    }))
+  );
+
+  const getIndex = (wall, row, col) => {
+    const base = wall * 30;
+    const isOdd = row % 2 === 1;
+    const adjustedCol = isOdd ? COLS - 1 - col : col;
+    return base + row * COLS + adjustedCol;
+  };
 
   const tid = setInterval(() => {
-    // clear previous frame on wall 1 & wall 2
-    for (let c = 0; c < COLS; c++) {
+    // Clear wall 1 and 2
+    for (const wall of WALLS) {
       for (let r = 0; r < ROWS; r++) {
-        const i1 = r * COLS + c + 30;  // wall 1 offset
-        const i2 = r * COLS + c + 60;  // wall 2 offset
-        gridRef.current[i1].color = "#000000";
-        gridRef.current[i2].color = "#000000";
+        for (let c = 0; c < COLS; c++) {
+          const idx = getIndex(wall, r, c);
+          gridRef.current[idx].color = "#000000";
+        }
       }
     }
 
-    // advance + draw new drops
-    for (let c = 0; c < COLS; c++) {
-      drops1[c] = (drops1[c] + 1) % ROWS;
-      const idx1 = drops1[c] * COLS + c + 30;
-      gridRef.current[idx1].color = "#00FFFF";
+    // Animate drops
+    for (const drop of drops) {
+      if (drop.isWaiting) {
+        drop.waitTimer -= 1;
+        if (drop.waitTimer <= 0) {
+          drop.y = 0;
+          drop.isWaiting = false;
+        }
+        continue;
+      }
 
-      drops2[c] = (drops2[c] + 1) % ROWS;
-      const idx2 = drops2[c] * COLS + c + 60;
-      gridRef.current[idx2].color = "#00FFFF";
+      const idx = getIndex(drop.wall, drop.y, drop.col);
+      gridRef.current[idx].color = "#00FFFF";
+
+      drop.y += 1;
+      if (drop.y >= ROWS) {
+        drop.isWaiting = true;
+        drop.waitTimer = Math.floor(Math.random() * 5) + 2; // 2–6 cycles delay
+      }
     }
 
     setGridUpdated(prev => prev + 1);
-  }, 100); // fall speed: 100 ms
+  }, FALL_SPEED);
 
-  // only run when no game is actually running
   return () => clearInterval(tid);
-}, [gameLaunched, game2Launched]);
-
+}, [gameLaunched, game2Launched, isCountdownActive]);
 
   useEffect(() => {
     connectWebSocket();
