@@ -181,43 +181,43 @@ function App() {
 
   };
 
-// Idle animation for left & right walls (5×6 panels)
-// wall 0 = middle, wall 1 = left, wall 2 = right
+// Matrix‑style rain on left (wall 1) & right (wall 2)
 useEffect(() => {
-  // perimeter of a 6‑row × 5‑col grid (clockwise)
-  const ring = [
-    // top row
-    0, 1, 2, 3, 4,
-    // right side (rows 1–4)
-    9, 14, 19, 24,
-    // bottom row (cols 4→0)
-    29, 28, 27, 26, 25,
-    // left side (rows 4→1)
-    20, 15, 10, 5
-  ];
-  let step = 0, tid;
+  const COLS = 5;
+  const ROWS = 6;
+  // start each column at a random row
+  const drops1 = Array.from({ length: COLS }, () => Math.floor(Math.random() * ROWS));
+  const drops2 = Array.from({ length: COLS }, () => Math.floor(Math.random() * ROWS));
 
-  // run whenever neither game is actually launched
-  if (!gameLaunched && !game2Launched && !isCountdownActive) {
-    tid = setInterval(() => {
-      // clear last dot on wall 1 and wall 2
-      for (const i of ring) {
-        gridRef.current[i + 30].color = "#000000"; // wall 1
-        gridRef.current[i + 60].color = "#000000"; // wall 2
+  const tid = setInterval(() => {
+    // clear previous frame on wall 1 & wall 2
+    for (let c = 0; c < COLS; c++) {
+      for (let r = 0; r < ROWS; r++) {
+        const i1 = r * COLS + c + 30;  // wall 1 offset
+        const i2 = r * COLS + c + 60;  // wall 2 offset
+        gridRef.current[i1].color = "#000000";
+        gridRef.current[i2].color = "#000000";
       }
+    }
 
-      // draw the next dot
-      const idx = ring[step % ring.length];
-      gridRef.current[idx + 30].color = "#00FFFF";
-      gridRef.current[idx + 60].color = "#00FFFF";
-      setGridUpdated(prev => prev + 1);
+    // advance + draw new drops
+    for (let c = 0; c < COLS; c++) {
+      drops1[c] = (drops1[c] + 1) % ROWS;
+      const idx1 = drops1[c] * COLS + c + 30;
+      gridRef.current[idx1].color = "#00FFFF";
 
-      step++;
-    }, 200);
-  }
+      drops2[c] = (drops2[c] + 1) % ROWS;
+      const idx2 = drops2[c] * COLS + c + 60;
+      gridRef.current[idx2].color = "#00FFFF";
+    }
 
+    setGridUpdated(prev => prev + 1);
+  }, 100); // fall speed: 100 ms
+
+  // only run when no game is actually running
   return () => clearInterval(tid);
-}, [gameLaunched, game2Launched, isCountdownActive]);
+}, [gameLaunched, game2Launched]);
+
 
   useEffect(() => {
     connectWebSocket();
