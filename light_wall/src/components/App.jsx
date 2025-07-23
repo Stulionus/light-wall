@@ -187,7 +187,7 @@ useEffect(() => {
   const COLS = 5;
   const ROWS = 6;
   const WALLS = [1, 2];
-  const FALL_SPEED = 200;
+  const FALL_SPEED = 120;
 
   const drops = WALLS.flatMap(wall =>
     Array.from({ length: COLS }, (_, col) => ({
@@ -228,13 +228,19 @@ useEffect(() => {
         continue;
       }
 
-      const idx = getIndex(drop.wall, drop.y, drop.col);
-      gridRef.current[idx].color = "#00FFFF";
+      const colors = ["#00FFFF", "#017575", "#002626"];
+      for (let i = 0; i < 3; i++) {
+        const row = drop.y - i;
+        if (row >= 0 && row < ROWS) {
+          const idx = getIndex(drop.wall, row, drop.col);
+          gridRef.current[idx].color = colors[i];
+        }
+      }
 
       drop.y += 1;
-      if (drop.y >= ROWS) {
+      if (drop.y >= ROWS + 2) {
         drop.isWaiting = true;
-        drop.waitTimer = Math.floor(Math.random() * 5) + 2; // 2–6 cycles delay
+        drop.waitTimer = Math.floor(Math.random() * 5) + 2; // 2–6 frame pause
       }
     }
 
