@@ -183,25 +183,28 @@ function App() {
 
 // Idle animation for left & right walls on the main screen
 useEffect(() => {
+  // perimeter indices of one 3×10 wall, clockwise
   const ring = [
-    0,1,2,3,4,5,6,7,8,9,   // top row l→r
-    19,                    // mid‑row right
-    29,28,27,26,25,24,23,22,21,20, // bottom row r→l
-    10                     // mid‑row left
+    0,1,2,3,4,5,6,7,8,9,      // top row
+    19,                       // mid‑row right
+    29,28,27,26,25,24,23,22,21,20, // bottom row (reverse)
+    10                        // mid‑row left
   ];
-  let step = 0;
-  let tid;
+  let step = 0, tid;
 
+  // only when you’re on the main menu
   if (!showGame1Screen && !showGame2Screen && !isCountdownActive) {
     tid = setInterval(() => {
+      // clear last dot on wall 1 and wall 2
       ring.forEach(i => {
-        gridRef.current[i].color       = "#000000";
-        gridRef.current[i + 60].color  = "#000000";
+        gridRef.current[i + 30].color = "#000000"; // wall 1 = left
+        gridRef.current[i + 60].color = "#000000"; // wall 2 = right
       });
 
+      // draw new dot
       const idx = ring[step % ring.length];
-      gridRef.current[idx].color       = "#00FFFF";
-      gridRef.current[idx + 60].color  = "#00FFFF";
+      gridRef.current[idx + 30].color = "#00FFFF";
+      gridRef.current[idx + 60].color = "#00FFFF";
       setGridUpdated(prev => prev + 1);
 
       step++;
@@ -210,6 +213,7 @@ useEffect(() => {
 
   return () => clearInterval(tid);
 }, [showGame1Screen, showGame2Screen, isCountdownActive]);
+
 
   useEffect(() => {
     connectWebSocket();
